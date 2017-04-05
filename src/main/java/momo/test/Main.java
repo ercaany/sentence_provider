@@ -1,6 +1,7 @@
 package momo.test;
 
 import momo.crawler.WebCrawler;
+import momo.saver.DatabaseSaver;
 import momo.saver.FileContentSaver;
 
 /**
@@ -8,7 +9,7 @@ import momo.saver.FileContentSaver;
  */
 public class Main {
     public static void main(String [] args){
-        String url = "http://facebook.com";
+        String url = "https://tr.wikipedia.org/wiki/Bizans_%C4%B0mparatorlu%C4%9Fu";
         /*ContentHandler contentHandler = new ContentHandler(url, new UrlContent());
         String content = contentHandler.fetchContent();
 
@@ -18,8 +19,8 @@ public class Main {
             fileContentSaver.setFileNameIndex(fileContentSaver.getFileNameIndex() + 1);
         }*/
 
-        WebCrawler webCrawler = new WebCrawler(new FileContentSaver(1));
-        webCrawler.crawl(url);
+        /*WebCrawler webCrawler = new WebCrawler(new DatabaseSaver());
+        webCrawler.crawl(url);*/
 
     }
 }

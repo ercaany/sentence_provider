@@ -16,10 +16,13 @@ public class FileContent implements Content{
             StringBuilder content = new StringBuilder();
             String line = bufferedReader.readLine();
 
-            while (line != null) {
+            int i = 0;
+            while (i < 10000 && line != null) {
                 content.append(line);
                 content.append(" ");
+                content.append("###");
                 line = bufferedReader.readLine();
+                i++;
             }
 
             return content.toString();

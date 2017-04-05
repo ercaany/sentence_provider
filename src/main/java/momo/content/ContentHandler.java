@@ -5,9 +5,7 @@ import zemberek.tokenizer.SimpleSentenceBoundaryDetector;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by ercan on 23.03.2017.
@@ -52,6 +50,25 @@ public class ContentHandler {
 
         List<String> sentencesFromDetector = detector.getSentences(contentText);
         sentences.addAll(sentencesFromDetector);
+    }
+
+    public List<String> getSentencesFromParagraph(String paragraph){
+        SentenceBoundaryDetector detector = new SimpleSentenceBoundaryDetector();
+
+        return detector.getSentences(paragraph);
+    }
+
+    public Map<String, List<String>> getAbstractsWithTheirSentences(){
+        Map<String, List<String>> abstractsMap = new HashMap<String, List<String>>();
+        String[] abstracts = contentText.split("###");
+
+        int i = 0;
+        for(String paragraph: abstracts){
+            i++;
+            abstractsMap.put(Integer.toString(i), getSentencesFromParagraph(paragraph));
+        }
+
+        return abstractsMap;
     }
 
 

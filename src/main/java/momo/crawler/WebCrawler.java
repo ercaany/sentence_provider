@@ -28,7 +28,6 @@ public class WebCrawler {
         UrlContent urlContent;
         unvisitedPageList.add(seed);
 
-
         String nextUrl;
         int pageCount = 0;
         while(!unvisitedPageList.isEmpty() && pageCount < MAX_PAGE_COUNT_TO_SEARCH ){
@@ -40,6 +39,7 @@ public class WebCrawler {
                 ContentHandler contentHandler = new ContentHandler(nextUrl, urlContent);
                 contentHandler.fetchContent();
                 contentSaver.save(contentHandler.getSentences(), nextUrl);
+
 
                 System.out.println("##INFO## PAGE_NUMBER#" + pageCount +
                         " Succesfully connected to: " + nextUrl +
