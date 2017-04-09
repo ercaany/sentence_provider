@@ -22,11 +22,9 @@ public class Test {
         String keyspace = "tp";
         String tableName = "source";
 
-        String query = "CREATE TABLE source(" +
-                "source_name text PRIMARY KEY," +
-                "word_count_map map<text, int>," +
-                "best_words set<text>," +
-                "last_updated_date TIMESTAMP);";
+        String query = "CREATE TABLE unique_word(" +
+                "word text PRIMARY KEY," +
+                "documents set<text>);";
 
 
         Session session = createSession(keyspace);

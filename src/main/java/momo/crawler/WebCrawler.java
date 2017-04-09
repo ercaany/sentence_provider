@@ -12,7 +12,7 @@ import java.util.Set;
  * Created by ercan on 30.03.2017.
  */
 public class WebCrawler {
-    private final int MAX_PAGE_COUNT_TO_SEARCH = 2000;
+    private final int MAX_PAGE_COUNT_TO_SEARCH = 10;
     private List<String> unvisitedPageUrls;
     private Set<String> visitedPageUrlSet;
     private Set<WebPage> crawledWebPageSet;

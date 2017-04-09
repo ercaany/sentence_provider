@@ -1,18 +1,17 @@
 package momo.test;
 
-import momo.preprocess.PreprocessHandler;
-import momo.preprocess.PreprocessedSentence;
-import momo.validation.ValidationHandler;
-import zemberek.morphology.analysis.tr.TurkishMorphology;
+import momo.application.Application;
+import momo.crawler.WebPage;
 
 import java.io.IOException;
+import java.util.*;
 
 /**
  * Created by ercan on 23.03.2017.
  */
 public class Main {
     public static void main(String [] args) throws IOException {
-        /*String url = "https://tr.wikipedia.org/wiki/Bizans_%C4%B0mparatorlu%C4%9Fu";
+        /*
         ContentHandler contentHandler = new ContentHandler(url, new UrlContent());
         String content = contentHandler.fetchContent();
 
@@ -22,25 +21,42 @@ public class Main {
             fileContentSaver.setFileNameIndex(fileContentSaver.getFileNameIndex() + 1);
         }*/
 
-        /*WebCrawler webCrawler = new WebCrawler();
-        webCrawler.crawl(url);
-        Set<WebPage> crawledWebPages = webCrawler.getCrawledWebPageSet();*/
-        String sentence = "Ali bilgisayarını masaya koydu fakat kitabını dolaba koymayı unuttu.";
+         /*String sentence1 = "Ali bilgisayarını masaya koydu fakat kitabını dolaba koymayı unuttu.";
+        String sentence2 = "Adem elmasını masaya koydu fakat karpuzunu dolaba koymayı unuttu.";
+        List<String> sentences = new ArrayList<String>();
+        sentences.add(sentence1);
+        sentences.add(sentence2);*/
 
-        ValidationHandler validationHandler = new ValidationHandler();
-        if(validationHandler.validate(sentence)) {
-            //kayıt edilecek
-        }
+        // sentence test
+        /*Set<String > questions = new HashSet<String>();
+        questions.add("soru?");
+        Sentence sentenceObject = new Sentence(preprocessedSentence.getOriginalSentence(), "test_url");
+        sentenceObject.setQuestions(questions);
+        sentenceObject.setStemmedWordsList(preprocessedSentence.getStemList());
+        sentenceObject.setTags(questions);
 
-        PreprocessHandler preprocessHandler = new PreprocessHandler();
-        PreprocessedSentence preprocessedSentence = preprocessHandler.process(sentence);
+        SentenceDAO sentenceDAO = new SentenceDAO("tp", "sentence");
+        sentenceDAO.insert(sentenceObject);
 
-        System.out.println(preprocessedSentence.getOriginalSentence());
-        for(String word: preprocessedSentence.getStemList()){
-            System.out.println(word);
-        }
-        for(String word: preprocessedSentence.getWordCountMap().keySet()){
-            System.out.println(word + " " + preprocessedSentence.getWordCountMap().get(word));
-        }
+        // unique word test
+        UniqueWord uniqueWord = new UniqueWord("ercan");
+        List<String> documents = new ArrayList<String>();
+        documents.add("3");
+        documents.add("4");
+        uniqueWord.setDocumentList(documents);
+
+        UniqueWordDAO uniqueWordDAO = new UniqueWordDAO("tp", "unique_word");
+        uniqueWordDAO.update(uniqueWord);*/
+
+        String seed = "https://tr.wikipedia.org/wiki/Bizans_%C4%B0mparatorlu%C4%9Fu";
+        Application application = new Application("tp", "source", "unique_word");
+        Set<WebPage> webPages = application.getWebPagesFromCrawler(seed);
+        application.saveWebPageData(webPages);
+
+
     }
 }
+
+
+
+

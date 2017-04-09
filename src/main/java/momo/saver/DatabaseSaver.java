@@ -13,9 +13,16 @@ import java.util.Set;
  * Created by ercan on 05.04.2017.
  */
 public class DatabaseSaver implements ContentSaver {
+    private String tableName;
+    private String keyspace;
+
+    public DatabaseSaver(String tableName, String keyspace){
+        this.tableName = tableName;
+        this.keyspace = keyspace;
+    }
 
     public void save(Set<String> sentences, String url) {
-        Session session = createSession("tp");
+        Session session = createSession(keyspace);
         List<String> sentenceList = new ArrayList<String>();
 
         sentenceList.addAll(sentences);
@@ -24,23 +31,12 @@ public class DatabaseSaver implements ContentSaver {
                 "(paragraph_key, sentences, saved_date) " +
                 "VALUES ('"+url+"', ?, toTimestamp(now()));", sentenceList);
         session.execute(st);
-
     }
 
     private Session createSession(String keyspaceName){
-        // create a builder object for Cluster
         Cluster.Builder clusterBuilder = Cluster.builder();
-
-        // add a contact point (IP address of the node) and build it.
         Cluster cluster = clusterBuilder.addContactPoint("127.0.0.1").build();
 
-        /*
-        * This method creates a new session and initializes it.
-        * If you already have a keyspace, you can set it to the existing one by passing
-        * the keyspace name in string format to this method.
-        */
-        Session session = cluster.connect(keyspaceName);
-
-        return session;
+        return cluster.connect(keyspaceName);
     }
 }
