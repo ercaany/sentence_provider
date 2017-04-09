@@ -2,7 +2,6 @@ package momo.crawler;
 
 import momo.content.ContentHandler;
 import momo.content.UrlContent;
-import momo.saver.ContentSaver;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -13,49 +12,57 @@ import java.util.Set;
  * Created by ercan on 30.03.2017.
  */
 public class WebCrawler {
-    private final int MAX_PAGE_COUNT_TO_SEARCH = 200;
-    private List<String> unvisitedPageList;
-    private Set<String> visitedPageSet;
-    private ContentSaver contentSaver;
+    private final int MAX_PAGE_COUNT_TO_SEARCH = 2000;
+    private List<String> unvisitedPageUrls;
+    private Set<String> visitedPageUrlSet;
+    private Set<WebPage> crawledWebPageSet;
+    private String nextUrl;
 
-    public WebCrawler(ContentSaver contentSaver){
-        this.contentSaver = contentSaver;
-        unvisitedPageList = new ArrayList<String>();
-        visitedPageSet = new HashSet<String>();
+    public WebCrawler(){
+        unvisitedPageUrls = new ArrayList<String>();
+        visitedPageUrlSet = new HashSet<String>();
+        crawledWebPageSet = new HashSet<WebPage>();
     }
 
     public void crawl(String seed){
         UrlContent urlContent;
-        unvisitedPageList.add(seed);
+        unvisitedPageUrls.add(seed);
 
-        String nextUrl;
         int pageCount = 0;
-        while(!unvisitedPageList.isEmpty() && pageCount < MAX_PAGE_COUNT_TO_SEARCH ){
+        while(!unvisitedPageUrls.isEmpty() && pageCount < MAX_PAGE_COUNT_TO_SEARCH ){
             try{
                 nextUrl = getNextUrl();
-                visitedPageSet.add(nextUrl);
+                visitedPageUrlSet.add(nextUrl);
 
                 urlContent = new UrlContent();
-                ContentHandler contentHandler = new ContentHandler(nextUrl, urlContent);
-                contentHandler.fetchContent();
-                contentSaver.save(contentHandler.getSentences(), nextUrl);
-
+                handleContent(urlContent);
 
                 System.out.println("##INFO## PAGE_NUMBER#" + pageCount +
                         " Succesfully connected to: " + nextUrl +
                         " Now collecting data.. ##INFO##");
 
-                List<String> linksOnPage = urlContent.extractLinks();
-                for(String link: linksOnPage){
-                    if(!visitedPageSet.contains(link)){
-                        unvisitedPageList.add(link);
-                    }
-                }
+                updateUnvisitedPageUrls(urlContent);
                 pageCount++;
-
             }catch (Exception ex){
-                System.out.println("##ERROR## There was an error connecting to this web page.. " +
-                        "Moving to the next link.. ##ERROR##");
+                errorLog();
+            }
+        }
+    }
+
+    private void handleContent(UrlContent urlContent){
+        ContentHandler contentHandler = new ContentHandler(nextUrl, urlContent);
+        contentHandler.fetchContent();
+
+        WebPage webPage = new WebPage(nextUrl);
+        webPage.setSentences(contentHandler.getSentences());
+        crawledWebPageSet.add(webPage);
+    }
+
+    private void updateUnvisitedPageUrls(UrlContent urlContent){
+        List<String> linksOnPage = urlContent.extractLinks();
+        for(String link: linksOnPage){
+            if(!visitedPageUrlSet.contains(link) && !link.contains("#")){
+                unvisitedPageUrls.add(link);
             }
         }
     }
@@ -63,12 +70,20 @@ public class WebCrawler {
     private String getNextUrl(){
         String nextUrl;
         do{
-            nextUrl = unvisitedPageList.remove(0);
+            nextUrl = unvisitedPageUrls.remove(0);
         }
-        while(visitedPageSet.contains(nextUrl));
-        visitedPageSet.add(nextUrl);
+        while(visitedPageUrlSet.contains(nextUrl));
+        visitedPageUrlSet.add(nextUrl);
 
         return nextUrl;
     }
 
+    private void errorLog(){
+        System.out.println("##ERROR## There was an error connecting to this web page.. " +
+                "Moving to the next link.. ##ERROR##");
+    }
+
+    public Set<WebPage> getCrawledWebPageSet() {
+        return crawledWebPageSet;
+    }
 }
