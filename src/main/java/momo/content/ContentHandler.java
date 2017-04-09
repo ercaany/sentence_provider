@@ -1,8 +1,6 @@
 package momo.content;
 
-import zemberek.tokenizer.SentenceBoundaryDetector;
-import zemberek.tokenizer.SimpleSentenceBoundaryDetector;
-
+import zemberek.tokenization.TurkishSentenceExtractor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
@@ -46,16 +44,16 @@ public class ContentHandler {
 
     private void splitParagraphIntoSentences(){
         sentences = new HashSet<String>();
-        SentenceBoundaryDetector detector = new SimpleSentenceBoundaryDetector();
+        TurkishSentenceExtractor extractor = TurkishSentenceExtractor.DEFAULT;
 
-        List<String> sentencesFromDetector = detector.getSentences(contentText);
+        List<String> sentencesFromDetector = extractor.fromParagraph(contentText);
         sentences.addAll(sentencesFromDetector);
     }
 
     public List<String> getSentencesFromParagraph(String paragraph){
-        SentenceBoundaryDetector detector = new SimpleSentenceBoundaryDetector();
+        TurkishSentenceExtractor extractor = TurkishSentenceExtractor.DEFAULT;
 
-        return detector.getSentences(paragraph);
+        return extractor.fromParagraph(paragraph);
     }
 
     public Map<String, List<String>> getAbstractsWithTheirSentences(){
