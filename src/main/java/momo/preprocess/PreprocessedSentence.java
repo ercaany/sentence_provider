@@ -9,6 +9,7 @@ import java.util.Map;
 public class PreprocessedSentence {
     private String originalSentence;
     private List<String> stemList;
+    private List<String> tokenList;
     private Map<String, Integer> wordCountMap;
 
     public PreprocessedSentence(String sentence){
@@ -19,6 +20,14 @@ public class PreprocessedSentence {
 
     }
 
+    // getters and setters
+    public List<String> getTokenList() {
+        return tokenList;
+    }
+
+    public void setTokenList(List<String> tokenList) {
+        this.tokenList = tokenList;
+    }
 
     public String getOriginalSentence() {
         return originalSentence;

@@ -15,25 +15,29 @@ import java.util.List;
 public class StemmingPreprocessor extends Preprocessor{
     private TurkishTokenizer tokenizer;
     private TurkishMorphology morphology;
+    private List<String> tokenList;
+    private List<String> stemList;
 
     public StemmingPreprocessor(){
         this.tokenizer = TurkishTokenizer.DEFAULT;
         this.morphology = Morphology.getMorphology();
+        tokenList = new ArrayList<String>();
+        stemList = new ArrayList<String>();
     }
 
     public PreprocessedSentence process(PreprocessedSentence preprocessedSentence) {
-        List<String> stemList = getStemListFromSentence(preprocessedSentence.getOriginalSentence());
+        Iterator<Token> tokenIterator = tokenizer.getTokenIterator(preprocessedSentence.getOriginalSentence());
+        findStemsAndTokensFromIterator(tokenIterator);
         preprocessedSentence.setStemList(stemList);
+        preprocessedSentence.setTokenList(tokenList);
 
         return proceedToNext(preprocessedSentence);
     }
 
-    private List<String> getStemListFromSentence(String sentence){
-        Iterator<Token> tokenIterator = tokenizer.getTokenIterator(sentence);
-
-        List<String> stemList = new ArrayList<String>();
+    private void findStemsAndTokensFromIterator(Iterator<Token> tokenIterator){
         while (tokenIterator.hasNext()) {
             Token token = tokenIterator.next();
+            tokenList.add(token.getText());
 
             if(isAcceptable(token.getType())){
                 List<WordAnalysis> results = morphology.analyze(token.getText());
@@ -41,9 +45,8 @@ public class StemmingPreprocessor extends Preprocessor{
                 stemList.add(tokenLemma);
             }
         }
-
-        return stemList;
     }
+
 
     private boolean isAcceptable(int type){
         return type == 1 || type == 4 || type == 5 || type == 6 || type == 7 ||

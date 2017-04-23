@@ -2,6 +2,10 @@ package momo.test;
 
 import momo.application.Application;
 import momo.crawler.WebPage;
+import momo.dao.SentenceDAO;
+import momo.entity.Sentence;
+import momo.preprocess.PreprocessHandler;
+import momo.preprocess.PreprocessedSentence;
 
 import java.io.IOException;
 import java.util.*;
@@ -48,10 +52,29 @@ public class Main {
         UniqueWordDAO uniqueWordDAO = new UniqueWordDAO("tp", "unique_word");
         uniqueWordDAO.update(uniqueWord);*/
 
-        String seed = "https://tr.wikipedia.org/wiki/Bizans_%C4%B0mparatorlu%C4%9Fu";
+        /*String seed = "https://tr.wikipedia.org/wiki/Bizans_%C4%B0mparatorlu%C4%9Fu";
         Application application = new Application("tp", "source", "unique_word");
         Set<WebPage> webPages = application.getWebPagesFromCrawler(seed);
-        application.saveWebPageData(webPages);
+        application.saveWebPageData(webPages);*/
+
+        // sentence test
+        String sentence = "Adem elmasını masaya koydu fakat karpuzunu dolaba koymayı unuttu.";
+
+        PreprocessHandler preprocessHandler = new PreprocessHandler();
+        PreprocessedSentence preprocessedSentence = preprocessHandler.process(sentence);
+
+        Set<String > questions = new HashSet<String>();
+        questions.add("soru1");
+        questions.add("soru2");
+        Sentence sentenceObject = new Sentence(preprocessedSentence.getOriginalSentence(), "test_url");
+        sentenceObject.setQuestions(questions);
+        sentenceObject.setStemmedWordsList(preprocessedSentence.getStemList());
+        sentenceObject.setTokenList(preprocessedSentence.getTokenList());
+        sentenceObject.setTags(questions);
+
+        SentenceDAO sentenceDAO = new SentenceDAO("tp", "sentence");
+        sentenceDAO.prepareForInsert();
+        sentenceDAO.insert(sentenceObject);
 
 
     }
