@@ -2,6 +2,8 @@ package module.crawler;
 
 import application.GlobalParameter;
 import content.UrlContent;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import java.util.*;
 
@@ -34,18 +36,28 @@ public class WebCrawler extends Thread {
             try{
                 webPage = new WebPage(url);
                 webPage.setContent(urlContent.fetchContent(webPage.getUrl()));
-                webPageQueue.offer(webPage);
-                updateUnvisitedPageUrls();
 
-                System.out.println("##INFO## "  +
-                        " Succesfully connected to: " + url +
-                        " Now collecting data.. ##INFO##");
-            }catch (Exception ex){
+                if(checkAcceptanceOfDocument(urlContent.getDocument())){
+                    webPageQueue.offer(webPage);
+                    updateUnvisitedPageUrls();
+
+                    System.out.println("##INFO## "  +
+                            " Succesfully connected to: " + url +
+                            " Now collecting data.. ##INFO##");
+                }
+            } catch (Exception ex){
                 errorLog();
             }
         }
 
         //threadleri kapat
+    }
+
+    private boolean checkAcceptanceOfDocument(Document document) {
+        Element htmlTag = document.select("html").first();
+        String langAttribute = htmlTag.attr("lang");
+
+        return langAttribute != null && (langAttribute.equals("tr-TR") || langAttribute.equals("tr"));
     }
 
     private void updateUnvisitedPageUrls(){
@@ -61,9 +73,8 @@ public class WebCrawler extends Thread {
     }
 
     private boolean isAcceptable(String url) {
-        if(!url.contains("#"))
-            return true;
-        return false;
+        return !url.contains("#") && !url.contains("action=edit") && !url.contains("action=history")
+                && !url.contains("veaction=edit") && !url.contains(".jpg") && !url.contains(".png");
     }
 
     private void errorLog(){
@@ -71,6 +82,14 @@ public class WebCrawler extends Thread {
                 "Moving to the next link.. ##ERROR##");
     }
 
+    /*public static void main(String[] args){
+        WebCrawler webCrawler = new WebCrawler();
+        webCrawler.getUnvisitedPageUrls().add("https://tr.wikipedia.org/wiki/Arp_zehirlenmesi");
+        webCrawler.run();
+    }*/
+
+
+    // getters and setters
     public Set<WebPage> getCrawledWebPageSet() {
         return crawledWebPageSet;
     }
@@ -85,5 +104,13 @@ public class WebCrawler extends Thread {
 
     public void setWebPageQueue(Queue<WebPage> webPageQueue) {
         this.webPageQueue = webPageQueue;
+    }
+
+    public Queue<String> getUnvisitedPageUrls() {
+        return unvisitedPageUrls;
+    }
+
+    public void setUnvisitedPageUrls(Queue<String> unvisitedPageUrls) {
+        this.unvisitedPageUrls = unvisitedPageUrls;
     }
 }
