@@ -1,9 +1,6 @@
 package module.saver.dao;
 
-import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.Session;
+import com.datastax.driver.core.*;
 import module.saver.ModelVariables;
 import model.Sentence;
 
@@ -40,6 +37,17 @@ public class SentenceDAO {
         session.execute(bound);
     }
 
+    public void executeBatch(BatchStatement batchStatement){
+        session.execute(batchStatement);
+    }
+
+    public BoundStatement getBoundForInsert(Sentence sentence){
+        BoundStatement bound = preparedStatement.bind(sentence.getOriginalSentence(),
+                sentence.getQuestions(), sentence.getStemmedWordsList(),
+                sentence.getTags(), sentence.getTokenList());
+        return bound;
+    }
+
     public void prepareForInsert(){
         preparedStatement = session.prepare(
                 "INSERT INTO " + tableName + " (original_sentence, questions, " +
@@ -63,4 +71,5 @@ public class SentenceDAO {
 
         return cluster.connect(keyspace);
     }
+
 }
