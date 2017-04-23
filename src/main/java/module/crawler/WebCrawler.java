@@ -1,9 +1,13 @@
 package module.crawler;
 
 import application.GlobalParameter;
+import command.StopCommand;
 import content.UrlContent;
+import module.processor.Processor;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -11,6 +15,7 @@ import java.util.*;
  * Created by mustafa on 23.04.2017.
  */
 public class WebCrawler extends Thread {
+    private final static Logger logger = LoggerFactory.getLogger(WebCrawler.class);
     private final int MAX_PAGE_COUNT_TO_SEARCH = 10;
     private Queue<String> unvisitedPageUrls;
     private Set<WebPage> crawledWebPageSet;
@@ -25,6 +30,7 @@ public class WebCrawler extends Thread {
     }
 
     public void run() {
+        logger.trace("Crawler running..");
         crawl();
     }
 
@@ -41,16 +47,16 @@ public class WebCrawler extends Thread {
                     webPageQueue.offer(webPage);
                     updateUnvisitedPageUrls();
 
-                    System.out.println("##INFO## "  +
-                            " Succesfully connected to: " + url +
-                            " Now collecting data.. ##INFO##");
+                    logger.info("Succesfully connected to: " + url);
                 }
             } catch (Exception ex){
-                errorLog();
+                logger.warn(ex.getMessage());
             }
         }
 
-        //threadleri kapat
+        System.out.println("Kuyrukta bekleyen url yok.");
+        StopCommand stopCommand = new StopCommand();
+        stopCommand.execute(" ");
     }
 
     private boolean checkAcceptanceOfDocument(Document document) {
@@ -77,10 +83,6 @@ public class WebCrawler extends Thread {
                 && !url.contains("veaction=edit") && !url.contains(".jpg") && !url.contains(".png");
     }
 
-    private void errorLog(){
-        System.out.println("##ERROR## There was an error connecting to this web page.. " +
-                "Moving to the next link.. ##ERROR##");
-    }
 
     /*public static void main(String[] args){
         WebCrawler webCrawler = new WebCrawler();
