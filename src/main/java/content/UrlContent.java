@@ -36,4 +36,14 @@ public class UrlContent implements Content {
         return linksInHtml;
     }
 
+    // getters and setters
+
+
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
+    }
 }

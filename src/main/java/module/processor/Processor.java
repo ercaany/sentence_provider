@@ -5,6 +5,9 @@ import module.crawler.WebPage;
 import model.Sentence;
 import model.Source;
 import content.ContentHandler;
+import module.processor.preprocess.PreprocessHandler;
+import module.processor.preprocess.PreprocessedSentence;
+import module.processor.validation.ValidationHandler;
 
 import java.util.*;
 
@@ -15,13 +18,18 @@ public class Processor extends Thread {
     private WebCrawler crawler;
     private Queue<Source> dataToSaveQueue;
     private ContentHandler contentHandler;
+    private ValidationHandler validationHandler;
+    private PreprocessHandler preprocessHandler;
     public int waitingSize = 0;
 
     public Processor(WebCrawler crawler) {
         this.crawler = crawler;
         dataToSaveQueue = new LinkedList<Source>();
         contentHandler = new ContentHandler();
+        validationHandler = new ValidationHandler();
+        preprocessHandler = new PreprocessHandler();
     }
+
     public void run() {
         WebPage webPage;
 
@@ -29,7 +37,7 @@ public class Processor extends Thread {
             Source source = new Source();
             source.setSentenceSet(buildSentences(webPage.getContent()));
 
-            if(true) { //doküman kayda değer mi ona bakılacak
+            if(isSourceWorthy(source)) { //doküman kayda değer mi ona bakılacak
                 dataToSaveQueue.offer(source);
                 waitingSize++;
             }
@@ -43,16 +51,30 @@ public class Processor extends Thread {
         //crawler bittiyse elindekileri işle öyle kapan
     }
 
-    //DOĞRUDAN KAYDA DEĞER CÜMLE LİSTESİNİ DÖNECEK - İŞLENMİŞ OLACAK
+    private boolean isSourceWorthy(Source source){
+        int sentenceCount = source.getSentenceSet().size();
+
+        return sentenceCount > 5;
+    }
+
+    //DOĞRUDAN KAYDA HAZIR CÜMLE LİSTESİNİ DÖNECEK - İŞLENMİŞ OLACAK
     private Set<Sentence> buildSentences(String content) {
         List<String> sentences = contentHandler.getSentencesFromParagraph(content);
         Set<Sentence> sentenceSet = new HashSet<Sentence>();
 
         for(String sentence: sentences) {
-            //düzenlecek
-            sentenceSet.add(new Sentence(sentence));
-        }
+            if(validationHandler.validate(sentence)){
+                PreprocessedSentence preprocessedSentence = new PreprocessedSentence(sentence);
+                preprocessedSentence = preprocessHandler.process(sentence);
 
+                Sentence newSentence = new Sentence(sentence);
+                newSentence.setStemmedWordsList(preprocessedSentence.getStemList());
+                newSentence.setTokenList(preprocessedSentence.getTokenList());
+                // tags ata
+                // questions ata
+                sentenceSet.add(newSentence);
+            }
+        }
         return sentenceSet;
     }
 
