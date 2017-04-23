@@ -2,7 +2,7 @@ package momo.test;
 
 import module.processor.model.Sentence;
 import momo.application.Application;
-import momo.dao.SentenceDAO;
+import module.database.dao.SentenceDAO;
 import momo.preprocess.PreprocessHandler;
 import momo.preprocess.PreprocessedSentence;
 
@@ -31,7 +31,7 @@ public class Main {
         sentenceObject.setStemmedWordsList(preprocessedSentence.getStemList());
         sentenceObject.setTokenList(preprocessedSentence.getTokenList());
         sentenceObject.setTags(questions);
-        SentenceDAO sentenceDAO = new SentenceDAO("tp", "sentence");
+        SentenceDAO sentenceDAO = new SentenceDAO();
         sentenceDAO.prepareForInsert();
         sentenceDAO.insert(sentenceObject);
 

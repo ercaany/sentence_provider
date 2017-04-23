@@ -1,9 +1,10 @@
-package momo.dao;
+package module.database.dao;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
+import module.database.ModelVariables;
 import module.processor.model.UniqueWord;
 
 /**
@@ -15,9 +16,9 @@ public class UniqueWordDAO {
     private Session session;
     private PreparedStatement preparedStatement;
 
-    public UniqueWordDAO(String keyspace, String tableName){
-        this.keyspace = keyspace;
-        this.tableName = tableName;
+    public UniqueWordDAO(){
+        this.keyspace = ModelVariables.keyspace;
+        this.tableName = ModelVariables.uniqueWordTableName;
         session = createSession();
     }
 

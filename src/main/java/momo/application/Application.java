@@ -3,8 +3,8 @@ package momo.application;
 import module.crawler.WebPage;
 import module.processor.model.Source;
 import module.processor.model.UniqueWord;
-import momo.dao.SourceDAO;
-import momo.dao.UniqueWordDAO;
+import module.database.dao.SourceDAO;
+import module.database.dao.UniqueWordDAO;
 import momo.preprocess.PreprocessHandler;
 import momo.preprocess.PreprocessedSentence;
 import momo.validation.ValidationHandler;
@@ -25,8 +25,8 @@ public class Application {
     public Application(String keyspace, String sourceTableName, String uniqueWordTableName){
         validationHandler = new ValidationHandler();
         uniqueWordMap = new HashMap<String, UniqueWord>();
-        sourceDAO = new SourceDAO(keyspace,  sourceTableName);
-        uniqueWordDAO = new UniqueWordDAO(keyspace,  uniqueWordTableName);
+        sourceDAO = new SourceDAO();
+        uniqueWordDAO = new UniqueWordDAO();
     }
 
     /*public Set<WebPage> getWebPagesFromCrawler(String url){

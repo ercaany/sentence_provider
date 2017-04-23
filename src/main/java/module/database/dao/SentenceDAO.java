@@ -1,9 +1,10 @@
-package momo.dao;
+package module.database.dao;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
+import module.database.ModelVariables;
 import module.processor.model.Sentence;
 
 /**
@@ -15,9 +16,9 @@ public class SentenceDAO {
     private Session session;
     private PreparedStatement preparedStatement;
 
-    public SentenceDAO(String keyspace, String tableName){
-        this.keyspace = keyspace;
-        this.tableName = tableName;
+    public SentenceDAO(){
+        this.keyspace = ModelVariables.keyspace;
+        this.tableName = ModelVariables.sentenceTableName;
         session = createSession();
     }
 

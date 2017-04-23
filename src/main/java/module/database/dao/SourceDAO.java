@@ -1,9 +1,10 @@
-package momo.dao;
+package module.database.dao;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
+import module.database.ModelVariables;
 import module.processor.model.Source;
 
 import java.sql.Timestamp;
@@ -17,9 +18,9 @@ public class SourceDAO {
     private Session session;
     private PreparedStatement preparedStatement;
 
-    public SourceDAO(String keyspace, String tableName){
-        this.keyspace = keyspace;
-        this.tableName = tableName;
+    public SourceDAO(){
+        this.keyspace = ModelVariables.keyspace;
+        this.tableName = ModelVariables.sourceTableName;
         session = createSession();
     }
 
