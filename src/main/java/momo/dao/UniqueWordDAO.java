@@ -4,7 +4,7 @@ import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
-import momo.entity.UniqueWord;
+import module.processor.model.UniqueWord;
 
 /**
  * Created by ercan on 09.04.2017.

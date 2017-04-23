@@ -1,6 +1,8 @@
 package momo.content;
 
+import module.crawler.Content;
 import zemberek.tokenization.TurkishSentenceExtractor;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
@@ -17,6 +19,10 @@ public class ContentHandler {
     public ContentHandler(String sourceName, Content content){
         this.sourceName = sourceName;
         this.content = content;
+    }
+
+    public ContentHandler() {
+
     }
 
     public String fetchContent(){

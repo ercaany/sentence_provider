@@ -1,7 +1,10 @@
 package momo.dao;
 
-import com.datastax.driver.core.*;
-import momo.entity.Source;
+import com.datastax.driver.core.BoundStatement;
+import com.datastax.driver.core.Cluster;
+import com.datastax.driver.core.PreparedStatement;
+import com.datastax.driver.core.Session;
+import module.processor.model.Source;
 
 import java.sql.Timestamp;
 

@@ -1,7 +1,8 @@
-package momo.entity;
+package module.processor.model;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,6 +14,7 @@ public class Source {
     private Set<String> bestWords;
     private Timestamp lastUpdatedDate;
     private Map<String, Integer> wordCountMap;
+    private Set<Sentence> sentenceSet;
 
     public Source(String sourceName){
         this.sourceName = sourceName;
@@ -66,5 +68,13 @@ public class Source {
 
     public void setWordCountMap(Map<String, Integer> wordCountMap) {
         this.wordCountMap = wordCountMap;
+    }
+
+    public Set<Sentence> getSentenceSet() {
+        return sentenceSet;
+    }
+
+    public void setSentenceSet(Set<Sentence> sentenceSet) {
+        this.sentenceSet = sentenceSet;
     }
 }

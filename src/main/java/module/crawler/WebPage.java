@@ -1,12 +1,13 @@
-package momo.crawler;
+package module.crawler;
 
 import java.util.Set;
 
 /**
- * Created by ercan on 08.04.2017.
+ * Created by mustafa on 23.04.2017.
  */
 public class WebPage {
     private String url;
+    private String content;
     private Set<String> sentences;
 
     public WebPage(String url){
@@ -29,4 +30,14 @@ public class WebPage {
     public void setSentences(Set<String> sentences) {
         this.sentences = sentences;
     }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 }
+
+

@@ -4,10 +4,7 @@ import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
-import momo.entity.Sentence;
-import momo.entity.Source;
-
-import java.sql.Timestamp;
+import module.processor.model.Sentence;
 
 /**
  * Created by ercan on 09.04.2017.
@@ -27,14 +24,14 @@ public class SentenceDAO {
     public void insert(Sentence sentence){
         BoundStatement bound = preparedStatement.bind(sentence.getOriginalSentence(),
                 sentence.getQuestions(), sentence.getSourceName(),
-                sentence.getStemmedWordsList(), sentence.getTags(), sentence.getTokenList());
+                sentence.getStemmedWordsList(), sentence.getTags());
         session.execute(bound);
     }
 
     public void update(Sentence sentence){
         BoundStatement bound = preparedStatement.bind(sentence.getQuestions(),
                 sentence.getSourceName(), sentence.getStemmedWordsList(),
-                sentence.getTags(), sentence.getTokenList());
+                sentence.getTags());
         session.execute(bound);
     }
 
@@ -46,12 +43,12 @@ public class SentenceDAO {
     public void prepareForInsert(){
         preparedStatement = session.prepare(
                 "INSERT INTO " + tableName + " (original_sentence, questions, " +
-                        "source_name, stemmed_words_list, tags, token_list) values (?, ?, ?, ?, ?, ?)");
+                        "source_name, stemmed_words_list, tags) values (?, ?, ?, ?, ?)");
     }
 
     public void prepareForUpdate(){
         preparedStatement = session.prepare("UPDATE " + tableName +" " +
-                "SET questions= ?, source_name=?, stemmed_words_list=?, tags=?, token_list=?" +
+                "SET questions= ?, source_name=?, stemmed_words_list=?, tags=?" +
                 "WHERE original_sentence=?");
     }
 
