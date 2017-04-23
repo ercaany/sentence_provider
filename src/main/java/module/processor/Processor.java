@@ -2,9 +2,9 @@ package module.processor;
 
 import module.crawler.WebCrawler;
 import module.crawler.WebPage;
-import module.processor.model.Sentence;
-import module.processor.model.Source;
-import momo.content.ContentHandler;
+import model.Sentence;
+import model.Source;
+import content.ContentHandler;
 
 import java.util.*;
 

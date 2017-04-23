@@ -1,6 +1,7 @@
 package module.crawler;
 
 import application.GlobalParameter;
+import content.UrlContent;
 
 import java.util.*;
 
