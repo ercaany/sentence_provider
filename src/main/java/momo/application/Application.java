@@ -1,11 +1,10 @@
 package momo.application;
 
-import momo.crawler.WebCrawler;
-import momo.crawler.WebPage;
+import module.crawler.WebPage;
+import module.processor.model.Source;
+import module.processor.model.UniqueWord;
 import momo.dao.SourceDAO;
 import momo.dao.UniqueWordDAO;
-import momo.entity.Source;
-import momo.entity.UniqueWord;
 import momo.preprocess.PreprocessHandler;
 import momo.preprocess.PreprocessedSentence;
 import momo.validation.ValidationHandler;
@@ -30,12 +29,12 @@ public class Application {
         uniqueWordDAO = new UniqueWordDAO(keyspace,  uniqueWordTableName);
     }
 
-    public Set<WebPage> getWebPagesFromCrawler(String url){
+    /*public Set<WebPage> getWebPagesFromCrawler(String url){
         WebCrawler webCrawler = new WebCrawler();
         webCrawler.crawl(url);
 
         return webCrawler.getCrawledWebPageSet();
-    }
+    }*/
 
     public void saveWebPageData(Set<WebPage> crawledWebPages){
         uniqueWordDAO.prepareForInsert();

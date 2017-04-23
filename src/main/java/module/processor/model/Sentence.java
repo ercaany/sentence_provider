@@ -1,4 +1,4 @@
-package momo.entity;
+package module.processor.model;
 
 import java.util.List;
 import java.util.Set;
@@ -9,18 +9,15 @@ import java.util.Set;
 public class Sentence {
     private String originalSentence;
     private Set<String> questions;
-    private String sourceName;
     private List<String> stemmedWordsList;
-    private List<String> tokenList;
     private Set<String> tags;
 
-    public Sentence(String sentence, String sourceName){
+    public Sentence(String sentence){
         this.originalSentence = sentence;
-        this.sourceName = sourceName;
     }
 
     public Sentence(){
-        //non - args
+
     }
 
 
@@ -42,14 +39,6 @@ public class Sentence {
         this.questions = questions;
     }
 
-    public String getSourceName() {
-        return sourceName;
-    }
-
-    public void setSourceName(String sourceName) {
-        this.sourceName = sourceName;
-    }
-
     public List<String> getStemmedWordsList() {
         return stemmedWordsList;
     }
@@ -64,13 +53,5 @@ public class Sentence {
 
     public void setTags(Set<String> tags) {
         this.tags = tags;
-    }
-
-    public List<String> getTokenList() {
-        return tokenList;
-    }
-
-    public void setTokenList(List<String> tokenList) {
-        this.tokenList = tokenList;
     }
 }

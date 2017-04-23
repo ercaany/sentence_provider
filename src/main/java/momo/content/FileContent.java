@@ -1,5 +1,7 @@
 package momo.content;
 
+import module.crawler.Content;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -7,7 +9,7 @@ import java.io.IOException;
 /**
  * Created by ercan on 23.03.2017.
  */
-public class FileContent implements Content{
+public class FileContent implements Content {
 
     //boşlukları silme?
     public String fetchContent(String sourceName) throws  IOException {

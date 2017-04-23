@@ -1,4 +1,4 @@
-package momo.content;
+package module.crawler;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -12,20 +12,16 @@ import java.util.List;
 /**
  * Created by ercan on 23.03.2017.
  */
-public class UrlContent implements Content{
+public class UrlContent implements Content {
     private Document document;
 
     public String fetchContent(String sourceName) throws IOException {
         try {
             document = Jsoup.connect(sourceName).get();
-            return extractBodyTextFromHtml();
+            return document.body().text();
         } catch (IOException e) {
             throw  new IOException();
         }
-    }
-
-    private String extractBodyTextFromHtml(){
-        return document.body().text();
     }
 
     public List<String> extractLinks(){
