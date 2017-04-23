@@ -1,6 +1,8 @@
 package application;
 
 import module.crawler.WebCrawler;
+import module.processor.Processor;
+import module.saver.DBSaver;
 
 import java.util.Scanner;
 
@@ -8,19 +10,21 @@ import java.util.Scanner;
  * Created by mustafa on 23.04.2017.
  */
 public class Admin {
-    private WebCrawler crawler;
+    public static WebCrawler crawler;
+    public static Processor processor;
+    public static DBSaver dbSaver;
 
     static {
+        crawler = new WebCrawler();
+        processor = new Processor(crawler);
+        dbSaver = new DBSaver(processor);
+
         //ilklendirmeleri yap
         //global parameters ı oluştur
     }
 
-    public Admin(WebCrawler crawler) {
-        this.crawler = crawler;
-    }
-
     public static void main(String[] args) {
-        Admin admin = new Admin(new WebCrawler());
+        Admin admin = new Admin();
         admin.run();
     }
 
