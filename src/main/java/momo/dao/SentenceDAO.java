@@ -23,15 +23,14 @@ public class SentenceDAO {
 
     public void insert(Sentence sentence){
         BoundStatement bound = preparedStatement.bind(sentence.getOriginalSentence(),
-                sentence.getQuestions(), sentence.getSourceName(),
-                sentence.getStemmedWordsList(), sentence.getTags());
+                sentence.getQuestions(), sentence.getStemmedWordsList(),
+                sentence.getTags(), sentence.getTokenList());
         session.execute(bound);
     }
 
     public void update(Sentence sentence){
-        BoundStatement bound = preparedStatement.bind(sentence.getQuestions(),
-                sentence.getSourceName(), sentence.getStemmedWordsList(),
-                sentence.getTags());
+        BoundStatement bound = preparedStatement.bind(sentence.getQuestions(), sentence.getStemmedWordsList(),
+                sentence.getTags(), sentence.getTokenList());
         session.execute(bound);
     }
 
@@ -43,12 +42,12 @@ public class SentenceDAO {
     public void prepareForInsert(){
         preparedStatement = session.prepare(
                 "INSERT INTO " + tableName + " (original_sentence, questions, " +
-                        "source_name, stemmed_words_list, tags) values (?, ?, ?, ?, ?)");
+                        "stemmed_words_list, tags, token_list) values (?, ?, ?, ?, ?)");
     }
 
     public void prepareForUpdate(){
         preparedStatement = session.prepare("UPDATE " + tableName +" " +
-                "SET questions= ?, source_name=?, stemmed_words_list=?, tags=?" +
+                "SET questions= ?, stemmed_words_list=?, tags=?, token_list=?" +
                 "WHERE original_sentence=?");
     }
 

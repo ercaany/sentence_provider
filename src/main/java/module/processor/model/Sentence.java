@@ -10,6 +10,7 @@ public class Sentence {
     private String originalSentence;
     private Set<String> questions;
     private List<String> stemmedWordsList;
+    private List<String> tokenList;
     private Set<String> tags;
 
     public Sentence(String sentence){
@@ -17,9 +18,8 @@ public class Sentence {
     }
 
     public Sentence(){
-
+        // non-args
     }
-
 
     // getters and setters
 
@@ -53,5 +53,13 @@ public class Sentence {
 
     public void setTags(Set<String> tags) {
         this.tags = tags;
+    }
+
+    public List<String> getTokenList() {
+        return tokenList;
+    }
+
+    public void setTokenList(List<String> tokenList) {
+        this.tokenList = tokenList;
     }
 }

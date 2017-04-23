@@ -7,10 +7,14 @@ package momo.validation;
 public class QuestionableValidator extends Validator{
 
     public boolean validate(String sentence) {
-        System.out.println("questionable validation passed.");
+        boolean isValid = false;
 
-        if(true) {
-            //kendi işlemi doğru sonuç verdi
+        if(!sentence.contains("?")){
+            isValid = true;
+        }
+
+        if(isValid) {
+            System.out.println("questionable validation passed.");
             if(getNextValidator() != null) {
                 return getNextValidator().validate(sentence);
             }
