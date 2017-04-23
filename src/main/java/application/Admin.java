@@ -3,6 +3,8 @@ package application;
 import module.crawler.WebCrawler;
 import module.processor.Processor;
 import module.saver.DBSaver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Scanner;
 
@@ -10,6 +12,7 @@ import java.util.Scanner;
  * Created by mustafa on 23.04.2017.
  */
 public class Admin {
+    private final static Logger logger = LoggerFactory.getLogger(Admin.class);
     public static WebCrawler crawler;
     public static Processor processor;
     public static DBSaver dbSaver;
@@ -29,6 +32,7 @@ public class Admin {
     }
 
     private void run() {
+        logger.info("selam");
         CommandSet commandSet = new CommandSet(crawler);
         boolean next = true;
 

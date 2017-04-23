@@ -8,6 +8,7 @@ import application.Admin;
 public class AddCommand implements Command {
     public boolean execute(String parameter) {
         Admin.crawler.addUrl(parameter);
+        System.out.println(true);
         return true;
     }
 }

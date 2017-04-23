@@ -22,6 +22,10 @@ public class StartCommand implements Command {
                 System.out.println(ex.getMessage());
                 ex.printStackTrace();
                 return false;
+            } catch (IllegalThreadStateException ex) {
+                System.out.println(ex.getMessage());
+                ex.printStackTrace();
+                return false;
             }
         }
     }
