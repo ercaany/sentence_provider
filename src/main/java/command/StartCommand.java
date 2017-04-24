@@ -11,9 +11,9 @@ import org.slf4j.LoggerFactory;
 public class StartCommand implements Command {
     private final static Logger logger = LoggerFactory.getLogger(DBSaver.class);
 
-    public boolean execute(String parameter) {
+    public boolean execute(String[] parameter) {
         try {
-            int urlCount = Integer.parseInt(parameter); // madem limit var, url kuyruğunun boyutunu baştan belirle,
+            int urlCount = Integer.parseInt(parameter[1]); // madem limit var, url kuyruğunun boyutunu baştan belirle,
                                                         // ya da bunu array ile yap
                                                         // url sayısı ile birlikte zaman sınırlaması da konabilir
 

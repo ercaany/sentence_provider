@@ -33,7 +33,7 @@ public class Admin {
 
     private void run() {
         logger.info("selam");
-        CommandSet commandSet = new CommandSet(crawler);
+        CommandSet commandSet = new CommandSet();
         boolean next = true;
 
         while(next) {
