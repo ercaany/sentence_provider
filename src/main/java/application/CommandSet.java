@@ -2,8 +2,8 @@ package application;
 
 import command.AddCommand;
 import command.Command;
+import command.SetCommand;
 import command.StartCommand;
-import command.StopCommand;
 import module.crawler.WebCrawler;
 
 import java.util.HashMap;
@@ -15,11 +15,11 @@ import java.util.Map;
 public class CommandSet {
     private Map<String, Command> commandMap;
 
-    public CommandSet(WebCrawler crawler) {
+    public CommandSet() {
         commandMap = new HashMap<String, Command>();
         commandMap.put("add", new AddCommand());
         commandMap.put("start", new StartCommand());
-        commandMap.put("stop", new StopCommand());
+        commandMap.put("set", new SetCommand());
     }
 
     public void run(String command) {
@@ -30,7 +30,7 @@ public class CommandSet {
         } else if(commandMap.get(parseList[0]) == null) {
             System.out.println("Komut bulunamadı");
         } else {
-            commandMap.get(parseList[0]).execute(parseList[1]);
+            commandMap.get(parseList[0]).execute(parseList);
         }
     }
 }
