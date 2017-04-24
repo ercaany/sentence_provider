@@ -1,5 +1,6 @@
 package module.crawler;
 
+import application.GlobalParameter;
 import content.UrlContent;
 import module.processor.Processor;
 import org.jsoup.nodes.Document;
@@ -7,6 +8,7 @@ import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -44,9 +46,23 @@ public class WebCrawler {
 
                     logger.info("Succesfully connected to: " + url);
                     i++;
+
+                    if(isSessionReady(i)){
+                        System.out.println("Seans başlıyor... " + i);
+                        processor.process(webPageQueue);
+                        webPageQueue.clear();
+                        System.out.println("Seans bitti... " + i);
+                    }
                 }
                 url = unvisitedPageUrls.poll();
+            } catch(IOException ex){
+                System.out.println(url + " " + ex.getMessage());
+                ex.printStackTrace();
+                url = unvisitedPageUrls.poll();
+                logger.warn(ex.getMessage());
             } catch (Exception ex) {
+                System.out.println(url + " " + ex.getMessage());
+                ex.printStackTrace();
                 logger.warn(ex.getMessage());
             }
         }
@@ -55,6 +71,11 @@ public class WebCrawler {
         System.out.println("Veri indirme işlemi tamamlandı.");
         System.out.println("Veriler kayda hazırlanıyor.");
         processor.process(webPageQueue);
+    }
+
+    private boolean isSessionReady(int count){
+
+        return count > 0 && count % GlobalParameter.parameterMap.get("sessionCount") == 0;
     }
 
     private boolean checkAcceptanceOfDocument(Document document) {
@@ -70,8 +91,9 @@ public class WebCrawler {
             if(!visitedUrls.contains(link)){
                 visitedUrls.add(link);
 
-                if(isAcceptable(link))
+                if(isAcceptable(link) && !unvisitedPageUrls.contains(link)) {
                     unvisitedPageUrls.add(link);
+                }
             }
         }
     }
