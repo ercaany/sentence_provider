@@ -2,54 +2,45 @@ package module.saver;
 
 import com.datastax.driver.core.BatchStatement;
 import model.Sentence;
-import module.processor.Processor;
 import model.Source;
 import module.saver.dao.SentenceDAO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.LinkedList;
 import java.util.Queue;
 
 /**
  * Created by mustafa on 23.04.2017.
  */
-public class DBSaver extends Thread {
-    private static int batchSize = 100;
-    private Queue<Source> dataToSaveQueue;
-    private Processor processor;
+public class DBSaver {
+    private final static Logger logger = LoggerFactory.getLogger(DBSaver.class);
+    private static int batchSize = 2;
     private SentenceDAO sentenceDAO;
 
-    public DBSaver(Processor processor) {
-        dataToSaveQueue = new LinkedList<Source>();
-        this.processor = processor;
+    public DBSaver() {
         sentenceDAO = new SentenceDAO();
         sentenceDAO.prepareForInsert();
     }
 
-    public void run() {
-        while(processor.isAlive()) {
-            if(processor.waitingSize > batchSize) {
-                //datatosave lock lu olduğu sürece bekle - while
-                //locktan çıkınca sen lockla
+    public void save(Queue<Source> dataToSaveQueue) {
+        logger.trace("Running");
 
-                for(int i = 0; i < batchSize; i++) {
-                    dataToSaveQueue.offer(processor.getDataToSaveQueue().poll());
-                }
-
-                BatchStatement batch = new BatchStatement();
-
-                for(int i = 0; i < batchSize; i++) {
-                    for(Sentence sentence: dataToSaveQueue.poll().getSentenceSet())
+        BatchStatement batch = new BatchStatement();
+        int j = 0; //DENEME AMAÇLI batch too size hatası
+        for(int i = 0; i < batchSize; i++) {
+            Source source = dataToSaveQueue.poll();
+            for(Sentence sentence: source.getSentenceSet()) {
+                if(j < 5) {
+                    System.out.println("batch" + j);
                     batch.add(sentenceDAO.getBoundForInsert(sentence));
+                    j++; //refactoring !!
                 }
-
-                sentenceDAO.executeBatch(batch);
-                processor.waitingSize = 0;
-                //lock u bırak
-                //kuyruk içindekiler kayıt edilecek
             }
         }
 
-        //is alive değilse kalanı tamamen kaydet
-        //sonra sen de öl
+        //Sentence sentence = (Sentence) dataToSaveQueue.poll().getSentenceSet().toArray()[0];
+        //sentenceDAO.insert(sentence);
+        logger.trace("execute batch çağırıldı");
+        sentenceDAO.executeBatch(batch);
     }
 }

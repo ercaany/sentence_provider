@@ -1,13 +1,16 @@
 package module.saver.dao;
 
 import com.datastax.driver.core.*;
-import module.saver.ModelVariables;
 import model.Sentence;
+import module.saver.ModelVariables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by ercan on 09.04.2017.
  */
 public class SentenceDAO {
+    private final static Logger logger = LoggerFactory.getLogger(Sentence.class);
     private String keyspace;
     private String tableName;
     private Session session;
@@ -38,6 +41,7 @@ public class SentenceDAO {
     }
 
     public void executeBatch(BatchStatement batchStatement){
+        logger.info("Kayıt edildi");
         session.execute(batchStatement);
     }
 
@@ -47,6 +51,7 @@ public class SentenceDAO {
                 sentence.getTags(), sentence.getTokenList());
         return bound;
     }
+
 
     public void prepareForInsert(){
         preparedStatement = session.prepare(

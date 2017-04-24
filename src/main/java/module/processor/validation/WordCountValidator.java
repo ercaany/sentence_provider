@@ -16,7 +16,7 @@ public class WordCountValidator extends Validator {
         }
 
         if(isValid) {
-            System.out.println("word count validation passed.");
+            //System.out.println("word count validation passed.");
             if(getNextValidator() != null) {
                 return getNextValidator().validate(sentence);
             }

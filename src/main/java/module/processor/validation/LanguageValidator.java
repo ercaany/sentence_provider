@@ -23,7 +23,7 @@ public class LanguageValidator extends Validator {
         }
 
         if(isValid) {
-            System.out.println("language validation passed.");
+            //System.out.println("language validation passed.");
             if(getNextValidator() != null) {
                 return getNextValidator().validate(sentence);
             }

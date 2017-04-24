@@ -4,8 +4,8 @@ import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
-import module.saver.ModelVariables;
 import model.UniqueWord;
+import module.saver.ModelVariables;
 
 /**
  * Created by ercan on 09.04.2017.
