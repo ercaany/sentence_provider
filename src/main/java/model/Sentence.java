@@ -8,6 +8,7 @@ import java.util.Set;
  */
 public class Sentence {
     private String originalSentence;
+    private String sourceName;
     private Set<String> questions;
     private List<String> stemmedWordsList;
     private List<String> tokenList;
@@ -61,5 +62,13 @@ public class Sentence {
 
     public void setTokenList(List<String> tokenList) {
         this.tokenList = tokenList;
+    }
+
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
     }
 }

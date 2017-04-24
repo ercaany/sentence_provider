@@ -37,10 +37,8 @@ public class Processor {
         logger.trace("Processor running..");
 
         while((webPage = webPageQueue.poll()) != null) {
-            Source source = new Source();
-            source.setSentenceSet(buildSentences(webPage.getContent()));
+            Source source = buildSource(webPage.getUrl(), webPage.getContent());
             logger.trace("Processor " + source.getSourceName());
-
 
             if(isSourceWorthy(source)) { //doküman kayda değer mi ona bakılacak
                 dataToSaveQueue.offer(source);
@@ -59,25 +57,33 @@ public class Processor {
         return sentenceCount > 5;
     }
 
-    //DOĞRUDAN KAYDA HAZIR CÜMLE LİSTESİNİ DÖNECEK - İŞLENMİŞ OLACAK
-    private Set<Sentence> buildSentences(String content) {
+    private Source buildSource(String sourceName, String content){
+        Source source = new Source(sourceName);
         List<String> sentences = contentHandler.getSentencesFromParagraph(content);
-        Set<Sentence> sentenceSet = new HashSet<Sentence>();
 
         for(String sentence: sentences) {
             if(validationHandler.validate(sentence)){
                 PreprocessHandler preprocessHandler = new PreprocessHandler();
                 PreprocessedSentence preprocessedSentence = preprocessHandler.process(sentence);
 
-                Sentence newSentence = new Sentence(sentence);
-                newSentence.setStemmedWordsList(preprocessedSentence.getStemList());
-                newSentence.setTokenList(preprocessedSentence.getTokenList());
-                // tags ata
-                // questions ata
-                sentenceSet.add(newSentence);
+                Sentence sentenceObject = buildSentenceObject(preprocessedSentence);
+                sentenceObject.setSourceName(sourceName);
+                source.getSentenceSet().add(sentenceObject);
+                source.updateWordCountMap(preprocessedSentence.getWordCountMap());
             }
         }
-        return sentenceSet;
+
+        return source;
+    }
+
+    private Sentence buildSentenceObject(PreprocessedSentence preprocessedSentence){
+        Sentence newSentence = new Sentence(preprocessedSentence.getOriginalSentence());
+        newSentence.setStemmedWordsList(preprocessedSentence.getStemList());
+        newSentence.setTokenList(preprocessedSentence.getTokenList());
+        // tags ata
+        // questions ata
+
+        return newSentence;
     }
 
     private boolean isSaveable(String content) {

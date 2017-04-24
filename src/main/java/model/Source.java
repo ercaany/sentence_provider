@@ -2,6 +2,7 @@ package model;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ public class Source {
     public Source(String sourceName){
         this.sourceName = sourceName;
         wordCountMap = new HashMap<String, Integer>();
+        sentenceSet = new HashSet<Sentence>();
     }
 
     public Source(){

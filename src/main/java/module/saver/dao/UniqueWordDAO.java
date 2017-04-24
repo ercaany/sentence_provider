@@ -6,11 +6,14 @@ import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
 import model.UniqueWord;
 import module.saver.ModelVariables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by ercan on 09.04.2017.
  */
 public class UniqueWordDAO {
+    private final static Logger logger = LoggerFactory.getLogger(UniqueWordDAO.class);
     private String keyspace;
     private String tableName;
     private Session session;
@@ -20,6 +23,38 @@ public class UniqueWordDAO {
         this.keyspace = ModelVariables.keyspace;
         this.tableName = ModelVariables.uniqueWordTableName;
         session = createSession();
+    }
+
+    public void insert(UniqueWord uniqueWord){
+        try{
+            BoundStatement bound = preparedStatement.bind(
+                    uniqueWord.getWord(), uniqueWord.getDocumentSet());
+            session.execute(bound);
+            logger.info("UniqueWordDAO insert başarıyla tamamlandı.");
+        } catch(Exception ex){
+            logger.warn("UniqueWordDAO insert hata verdi.");
+        }
+    }
+
+    public void update(UniqueWord uniqueWord){
+        try{
+            BoundStatement bound = preparedStatement.bind(
+                    uniqueWord.getDocumentSet(), uniqueWord.getWord());
+            session.execute(bound);
+            logger.info("UniqueWordDAO update başarıyla tamamlandı.");
+        } catch(Exception ex){
+            logger.warn("UniqueWordDAO update hata verdi.");
+        }
+    }
+
+    public void delete(UniqueWord uniqueWord){
+        try{
+            BoundStatement bound = preparedStatement.bind(uniqueWord.getWord());
+            session.execute(bound);
+            logger.info("UniqueWordDAO delete başarıyla tamamlandı.");
+        } catch(Exception ex){
+            logger.warn("UniqueWordDAO delete hata verdi.");
+        }
     }
 
     public void prepareForInsert(){
@@ -36,23 +71,6 @@ public class UniqueWordDAO {
     public void prepareForDelete(){
         preparedStatement = session.prepare(
                 "DELETE FROM " + tableName + " WHERE word=?");
-    }
-
-    public void insert(UniqueWord uniqueWord){
-        BoundStatement bound = preparedStatement.bind(
-                uniqueWord.getWord(), uniqueWord.getDocumentSet());
-        session.execute(bound);
-    }
-
-    public void update(UniqueWord uniqueWord){
-        BoundStatement bound = preparedStatement.bind(
-                uniqueWord.getDocumentSet(), uniqueWord.getWord());
-        session.execute(bound);
-    }
-
-    public void delete(UniqueWord uniqueWord){
-        BoundStatement bound = preparedStatement.bind(uniqueWord.getWord());
-        session.execute(bound);
     }
 
     private Session createSession(){

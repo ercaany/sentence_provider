@@ -1,12 +1,14 @@
 package module.saver;
 
-import com.datastax.driver.core.BatchStatement;
 import model.Sentence;
 import model.Source;
 import module.saver.dao.SentenceDAO;
+import module.saver.dao.SourceDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -14,33 +16,32 @@ import java.util.Queue;
  */
 public class DBSaver {
     private final static Logger logger = LoggerFactory.getLogger(DBSaver.class);
-    private static int batchSize = 2;
+    private final static int batchSize = 20;
     private SentenceDAO sentenceDAO;
-
+    private SourceDAO sourceDAO;
     public DBSaver() {
         sentenceDAO = new SentenceDAO();
-        sentenceDAO.prepareForInsert();
+        sourceDAO = new SourceDAO();
     }
 
     public void save(Queue<Source> dataToSaveQueue) {
         logger.trace("Running");
 
-        BatchStatement batch = new BatchStatement();
-        int j = 0; //DENEME AMAÇLI batch too size hatası
+        List<Source> sourceBatchList = new ArrayList<Source>();
         for(int i = 0; i < batchSize; i++) {
             Source source = dataToSaveQueue.poll();
-            for(Sentence sentence: source.getSentenceSet()) {
-                if(j < 5) {
-                    System.out.println("batch" + j);
-                    batch.add(sentenceDAO.getBoundForInsert(sentence));
-                    j++; //refactoring !!
-                }
+            if(source != null){
+                List<Sentence> sentenceBatchList = new ArrayList<Sentence>();
+                sentenceBatchList.addAll(source.getSentenceSet());
+                sentenceDAO.insertBatch(sentenceBatchList);
+                sourceBatchList.add(source);
             }
         }
+        sourceDAO.insertBatch(sourceBatchList);
 
         //Sentence sentence = (Sentence) dataToSaveQueue.poll().getSentenceSet().toArray()[0];
         //sentenceDAO.insert(sentence);
-        logger.trace("execute batch çağırıldı");
-        sentenceDAO.executeBatch(batch);
+        //logger.trace("execute batch çağırıldı");
+        //sentenceDAO.executeBatch(batch);
     }
 }

@@ -1,18 +1,19 @@
 package module.saver.dao;
 
-import com.datastax.driver.core.BoundStatement;
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.Session;
+import com.datastax.driver.core.*;
 import model.Source;
 import module.saver.ModelVariables;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * Created by ercan on 09.04.2017.
  */
 public class SourceDAO {
+    private final static Logger logger = LoggerFactory.getLogger(SourceDAO.class);
     private String keyspace;
     private String tableName;
     private Session session;
@@ -25,22 +26,57 @@ public class SourceDAO {
     }
 
     public void insert(Source source){
-        BoundStatement bound = preparedStatement.bind(
-                source.getSourceName(), source.getBestWords(),
-                new Timestamp(System.currentTimeMillis()), source.getWordCountMap());
-        session.execute(bound);
+        try{
+            BoundStatement bound = preparedStatement.bind(
+                    source.getSourceName(), source.getBestWords(),
+                    new Timestamp(System.currentTimeMillis()), source.getWordCountMap());
+            session.execute(bound);
+            logger.info("SourceDAO insert başarıyla tamamlandı.");
+        } catch(Exception ex){
+            logger.warn("SourceDAO insert hata verdi.");
+        }
     }
 
     public void update(Source source){
-        BoundStatement bound = preparedStatement.bind(
-                source.getBestWords(), new Timestamp(System.currentTimeMillis()),
-                source.getWordCountMap(), source.getSourceName());
-        session.execute(bound);
+        try{
+            BoundStatement bound = preparedStatement.bind(
+                    source.getBestWords(), new Timestamp(System.currentTimeMillis()),
+                    source.getWordCountMap(), source.getSourceName());
+            session.execute(bound);
+            logger.info("SourceDAO update başarıyla tamamlandı.");
+        } catch(Exception ex){
+            logger.warn("SourceDAO update hata verdi.");
+        }
     }
 
     public void delete(Source source){
-        BoundStatement bound = preparedStatement.bind(source.getSourceName());
-        session.execute(bound);
+        try{
+            BoundStatement bound = preparedStatement.bind(source.getSourceName());
+            session.execute(bound);
+            logger.info("SourceDAO delete başarıyla tamamlandı.");
+        } catch(Exception ex){
+            logger.warn("SourceDAO delete hata verdi.");
+        }
+    }
+
+    public void insertBatch(List<Source> sourceList){
+        try{
+            BatchStatement batch = new BatchStatement();
+            prepareForInsert();
+
+            for(Source source: sourceList){
+                BoundStatement bound = preparedStatement.bind(
+                        source.getSourceName(), source.getBestWords(),
+                        new Timestamp(System.currentTimeMillis()), source.getWordCountMap());
+                batch.add(bound);
+            }
+
+            session.execute(batch);
+            logger.info("SourceDAO insertBatch başarıyla tamamlandı.");
+        } catch(Exception ex){
+            logger.warn("SourceDAO insertBatch hata verdi.");
+        }
+
     }
 
     public void prepareForInsert(){
@@ -66,7 +102,5 @@ public class SourceDAO {
 
         return cluster.connect(keyspace);
     }
-
-
 
 }

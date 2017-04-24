@@ -23,8 +23,13 @@ public class StartCommand implements Command {
             }
             Admin.crawler.crawl(urlCount);
             return true;
-        } catch (Exception ex) { //string to int exceptionu olarak düzelt
+        } catch(NumberFormatException ex){
             System.out.println("Lütfen start ile birlikte sayısal bir değer girin."); // parametre kontrolünü ayrı metotta yap
+            logger.warn(ex.getMessage());
+            logger.warn(ex.toString());
+            return false;
+        }
+        catch (Exception ex) { //string to int exceptionu olarak düzelt
             logger.warn(ex.getMessage());
             logger.warn(ex.toString());
             ex.printStackTrace();
