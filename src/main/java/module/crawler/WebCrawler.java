@@ -1,6 +1,5 @@
 package module.crawler;
 
-import application.GlobalParameter;
 import content.UrlContent;
 import module.processor.Processor;
 import org.jsoup.nodes.Document;
@@ -15,19 +14,18 @@ import java.util.*;
  */
 public class WebCrawler {
     private final static Logger logger = LoggerFactory.getLogger(WebCrawler.class);
-    private final int MAX_PAGE_COUNT_TO_SEARCH = 10;
     private Queue<String> unvisitedPageUrls;
-    private Set<WebPage> crawledWebPageSet;
     private Queue<WebPage> webPageQueue;
     private UrlContent urlContent;
     private Processor processor;
+    private Set<String> visitedUrls;
 
     public WebCrawler(Processor processor){
         unvisitedPageUrls = new LinkedList<String>();
-        crawledWebPageSet = new HashSet<WebPage>();
         webPageQueue = new LinkedList<WebPage>();
         urlContent = new UrlContent();
         this.processor = processor;
+        visitedUrls = new HashSet<String>();
     }
 
     public void crawl(int count) {
@@ -69,8 +67,8 @@ public class WebCrawler {
     private void updateUnvisitedPageUrls(){
         List<String> linksOnPage = urlContent.extractLinks();
         for(String link: linksOnPage){
-            if(!GlobalParameter.visitedUrlSet.contains(link)){
-                GlobalParameter.visitedUrlSet.add(link);
+            if(!visitedUrls.contains(link)){
+                visitedUrls.add(link);
 
                 if(isAcceptable(link))
                     unvisitedPageUrls.add(link);
@@ -84,27 +82,11 @@ public class WebCrawler {
     }
 
     // getters and setters
-    public Set<WebPage> getCrawledWebPageSet() {
-        return crawledWebPageSet;
-    }
-
     public void addUrl(String url) {
         unvisitedPageUrls.add(url);
     }
 
-    public Queue<WebPage> getWebPageQueue() {
-        return webPageQueue;
-    }
-
-    public void setWebPageQueue(Queue<WebPage> webPageQueue) {
-        this.webPageQueue = webPageQueue;
-    }
-
     public Queue<String> getUnvisitedPageUrls() {
         return unvisitedPageUrls;
-    }
-
-    public void setUnvisitedPageUrls(Queue<String> unvisitedPageUrls) {
-        this.unvisitedPageUrls = unvisitedPageUrls;
     }
 }
