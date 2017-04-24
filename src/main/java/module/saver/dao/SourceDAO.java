@@ -4,8 +4,8 @@ import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
-import module.saver.ModelVariables;
 import model.Source;
+import module.saver.ModelVariables;
 
 import java.sql.Timestamp;
 

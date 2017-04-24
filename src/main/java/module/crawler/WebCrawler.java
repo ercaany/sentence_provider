@@ -1,7 +1,6 @@
 package module.crawler;
 
 import application.GlobalParameter;
-import command.StopCommand;
 import content.UrlContent;
 import module.processor.Processor;
 import org.jsoup.nodes.Document;
@@ -14,49 +13,50 @@ import java.util.*;
 /**
  * Created by mustafa on 23.04.2017.
  */
-public class WebCrawler extends Thread {
+public class WebCrawler {
     private final static Logger logger = LoggerFactory.getLogger(WebCrawler.class);
     private final int MAX_PAGE_COUNT_TO_SEARCH = 10;
     private Queue<String> unvisitedPageUrls;
     private Set<WebPage> crawledWebPageSet;
     private Queue<WebPage> webPageQueue;
     private UrlContent urlContent;
+    private Processor processor;
 
-    public WebCrawler(){
+    public WebCrawler(Processor processor){
         unvisitedPageUrls = new LinkedList<String>();
         crawledWebPageSet = new HashSet<WebPage>();
         webPageQueue = new LinkedList<WebPage>();
         urlContent = new UrlContent();
+        this.processor = processor;
     }
 
-    public void run() {
-        logger.trace("Crawler running..");
-        crawl();
-    }
-
-    public void crawl() {
+    public void crawl(int count) {
         WebPage webPage;
-        String url;
+        String url = unvisitedPageUrls.poll();
+        int i = 0;
 
-        while((url = unvisitedPageUrls.poll()) != null) {
-            try{
+        while (i < count && url != null) { //count, toplam deneme sayısı? toplam başarılı deneme sayısı?
+            try {
                 webPage = new WebPage(url);
                 webPage.setContent(urlContent.fetchContent(webPage.getUrl()));
 
-                if(checkAcceptanceOfDocument(urlContent.getDocument())){
+                if (checkAcceptanceOfDocument(urlContent.getDocument())) {
                     webPageQueue.offer(webPage);
                     updateUnvisitedPageUrls();
 
                     logger.info("Succesfully connected to: " + url);
+                    i++;
                 }
-            } catch (Exception ex){
+                url = unvisitedPageUrls.poll();
+            } catch (Exception ex) {
                 logger.warn(ex.getMessage());
             }
         }
 
         System.out.println("Kuyrukta bekleyen url yok.");
-        StopCommand stopCommand = new StopCommand();
-        stopCommand.execute(" ");
+        System.out.println("Veri indirme işlemi tamamlandı.");
+        System.out.println("Veriler kayda hazırlanıyor.");
+        processor.process(webPageQueue);
     }
 
     private boolean checkAcceptanceOfDocument(Document document) {
@@ -82,14 +82,6 @@ public class WebCrawler extends Thread {
         return !url.contains("#") && !url.contains("action=edit") && !url.contains("action=history")
                 && !url.contains("veaction=edit") && !url.contains(".jpg") && !url.contains(".png");
     }
-
-
-    /*public static void main(String[] args){
-        WebCrawler webCrawler = new WebCrawler();
-        webCrawler.getUnvisitedPageUrls().add("https://tr.wikipedia.org/wiki/Arp_zehirlenmesi");
-        webCrawler.run();
-    }*/
-
 
     // getters and setters
     public Set<WebPage> getCrawledWebPageSet() {

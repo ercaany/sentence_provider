@@ -25,13 +25,12 @@ public class CommandSet {
     public void run(String command) {
         String[] parseList = command.split(" ");
 
-        if(commandMap.get(parseList[0]) == null) {
+        if(parseList.length < 2) {
+            System.out.println("Eksik parametre"); //bu kontrol komutlarda da olmalı. parametre sayısı değişebilir
+        } else if(commandMap.get(parseList[0]) == null) {
             System.out.println("Komut bulunamadı");
         } else {
-            if(parseList.length == 2)
-                commandMap.get(parseList[0]).execute(parseList[1]);
-            else if(parseList.length ==  1)
-                commandMap.get(parseList[0]).execute("none");
+            commandMap.get(parseList[0]).execute(parseList[1]);
         }
     }
 }

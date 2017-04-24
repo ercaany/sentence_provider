@@ -1,63 +1,56 @@
 package module.processor;
 
-import module.crawler.WebCrawler;
-import module.crawler.WebPage;
+import content.ContentHandler;
 import model.Sentence;
 import model.Source;
-import content.ContentHandler;
+import module.crawler.WebPage;
 import module.processor.preprocess.PreprocessHandler;
 import module.processor.preprocess.PreprocessedSentence;
 import module.processor.validation.ValidationHandler;
+import module.saver.DBSaver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+import static application.Admin.crawler;
+
 /**
  * Created by mustafa on 23.04.2017.
  */
-public class Processor extends Thread {
+public class Processor {
     private final static Logger logger = LoggerFactory.getLogger(Processor.class);
-    private WebCrawler crawler;
+    private DBSaver dbSaver;
     private Queue<Source> dataToSaveQueue;
     private ContentHandler contentHandler;
     private ValidationHandler validationHandler;
-    private PreprocessHandler preprocessHandler;
-    public int waitingSize = 0;
 
-    public Processor(WebCrawler crawler) {
-        this.crawler = crawler;
+    public Processor(DBSaver dbSaver) {
+        this.dbSaver = dbSaver;
         dataToSaveQueue = new LinkedList<Source>();
         contentHandler = new ContentHandler();
         validationHandler = new ValidationHandler();
-        preprocessHandler = new PreprocessHandler();
     }
 
-    public void run() {
+    public void process(Queue<WebPage> webPageQueue) {
         WebPage webPage;
         logger.trace("Processor running..");
 
-        while(crawler.isAlive()) {
-            while((webPage = crawler.getWebPageQueue().poll()) != null) {
-                Source source = new Source();
-                source.setSentenceSet(buildSentences(webPage.getContent()));
-                logger.trace("Processor " + source.getSourceName());
+        while((webPage = webPageQueue.poll()) != null) {
+            Source source = new Source();
+            source.setSentenceSet(buildSentences(webPage.getContent()));
+            logger.trace("Processor " + source.getSourceName());
 
 
-                if(isSourceWorthy(source)) { //doküman kayda değer mi ona bakılacak
-                    dataToSaveQueue.offer(source);
-                    waitingSize++;
-                    logger.info("Processor kayda değer bulundu " + source.getSourceName());
-                }
-
-                //cümle listesini oluştur tik
-                //kayda değer cümle listelerini oluştur
-                //doküman kayıt etmeye değer mi ona karar ver
-                //evetse listeye ekle
+            if(isSourceWorthy(source)) { //doküman kayda değer mi ona bakılacak
+                dataToSaveQueue.offer(source);
+                logger.info("Processor kayda değer bulundu " + source.getSourceName());
             }
         }
 
-        //crawler bittiyse elindekileri işle öyle kapan
+        System.out.println("Veri işleme tamamlandı.");
+        System.out.println("Veriler kaydediliyor.");
+        dbSaver.save(dataToSaveQueue);
     }
 
     private boolean isSourceWorthy(Source source){
@@ -73,8 +66,8 @@ public class Processor extends Thread {
 
         for(String sentence: sentences) {
             if(validationHandler.validate(sentence)){
-                PreprocessedSentence preprocessedSentence = new PreprocessedSentence(sentence);
-                preprocessedSentence = preprocessHandler.process(sentence);
+                PreprocessHandler preprocessHandler = new PreprocessHandler();
+                PreprocessedSentence preprocessedSentence = preprocessHandler.process(sentence);
 
                 Sentence newSentence = new Sentence(sentence);
                 newSentence.setStemmedWordsList(preprocessedSentence.getStemList());
@@ -82,8 +75,6 @@ public class Processor extends Thread {
                 // tags ata
                 // questions ata
                 sentenceSet.add(newSentence);
-                logger.trace("Processor buildSentences" + sentence);
-
             }
         }
         return sentenceSet;

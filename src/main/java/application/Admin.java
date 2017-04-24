@@ -18,9 +18,9 @@ public class Admin {
     public static DBSaver dbSaver;
 
     static {
-        crawler = new WebCrawler();
-        processor = new Processor(crawler);
-        dbSaver = new DBSaver(processor);
+        dbSaver = new DBSaver();
+        processor = new Processor(dbSaver);
+        crawler = new WebCrawler(processor);
 
         //ilklendirmeleri yap
         //global parameters ı oluştur
